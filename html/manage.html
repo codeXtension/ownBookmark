@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="bookmarkApp">
+<head>
+    <link rel="stylesheet" href="../css/libs/bootstrap.min.css"/>
+    <link rel="stylesheet" href="../css/libs/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="../css/libs/ng-tags-input.bootstrap.min.css"/>
+    <link rel="stylesheet" href="../css/libs/ng-tags-input.min.css"/>
+    <link rel="stylesheet" href="../css/custom.css"/>
+    <script type="text/javascript" src="../js/libs/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="../js/libs/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../js/libs/angular.min.js"></script>
+    <script type="text/javascript" src="../js/libs/angular-resource.min.js"></script>
+    <script type="text/javascript" src="../js/libs/validator.js"></script>
+    <script type="text/javascript" src="../js/libs/underscore-min.js"></script>
+    <script type="text/javascript" src="../js/libs/jquery.tagcanvas.js"></script>
+    <script type="text/javascript" src="../js/libs/bootstrap3-typeahead.js"></script>
+    <script type="text/javascript" src="../js/libs/ng-tags-input.min.js"></script>
+    <script type="text/javascript" src="../js/controller.js"></script>
+    <script type="text/javascript" src="../js/manageCtrl.js"></script>
+    <title>Manage Bookmarks</title>
+</head>
+<body ng-controller="manageCtrl">
+<div class="container-fluid" style="width: 400px">
+    <form data-toggle="validator" name="bookmarkForm" role="form">
+        <div class="form-group form-group-sm">
+            <div class="media">
+                <div class="media-left">
+                        <img  style="width: 16px; height: 16px;top: 10px; position: relative" class="media-object" ng-src="{{app.favIconUrl}}">
+                </div>
+                <div class="media-body">
+                    <h4>Add Bookmark</h4>
+                </div>
+            </div>
+        </div>
+        <div class="form-group form-group-sm">
+            <label class="sr-only" for="title">Title</label>
+
+            <div class="input-group">
+                <div class="input-group-addon">TITLE</div>
+                <input type="text" required="required" ng-model="app.title" id="title" class="form-control"
+                       placeholder="">
+            </div>
+        </div>
+        <div class="form-group form-group-sm">
+            <label class="sr-only" for="url">URL</label>
+
+            <div class="input-group">
+                <div class="input-group-addon">URL</div>
+                <input type="URL" required="required" ng-model="app.url" id="url" class="form-control"
+                       placeholder="">
+            </div>
+        </div>
+        <div class="input-group">
+            <tags-input id="tagsInput" ng-model="app.tags" class="bootstrap" style="width:600px"
+                        add-from-autocomplete-only="false">
+                <auto-complete source="loadItems($query)"
+                               min-length="2"
+                               debounce-delay="0"
+                               max-results="10"></auto-complete>
+            </tags-input>
+        </div>
+        <div class="form-group">
+            <button type="submit" ng-disabled="bookmarkForm.$invalid" ng-click="addBookmark(app)"
+                    class="btn btn-primary">Add bookmark
+            </button>
+        </div>
+    </form>
+</div>
+</body>
+</html>
