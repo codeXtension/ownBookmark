@@ -89,6 +89,9 @@ bookmarkApp.controller('settingsCtrl', function ($scope, $http, bookmarkService,
                 } else {
                     deferred.resolve(false);
                 }
+            },
+            function(errorResponse){
+                deferred.resolve(false); //TODO this should be improved
             });
         return deferred.promise;
     };
