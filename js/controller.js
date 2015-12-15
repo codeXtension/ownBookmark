@@ -1,7 +1,7 @@
 /**
  * Created by eelkhour on 24.11.2015.
  */
-var bookmarkApp = angular.module('bookmarkApp', ['ngResource', 'ngTagsInput']);
+var bookmarkApp = angular.module('bookmarkApp', ['ngResource', 'ngTagsInput', 'ui.validate']);
 
 var bookmarkUri = '/index.php/apps/bookmarks/bookmark';
 var queryParam = '?page=%';
