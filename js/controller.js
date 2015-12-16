@@ -151,7 +151,7 @@ bookmarkApp.service('bookmarkService', function ($http, $q) {
     this.connectToDB = function () {
         var deferred = $q.defer();
         var db;
-        var request = window.indexedDB.open("bookmarksApp", 1);
+        var request = window.indexedDB.open("ownBookmarksApp", 1);
         request.onerror = function (event) {
             console.log("error: ");
             deferred.reject(db);
@@ -165,7 +165,8 @@ bookmarkApp.service('bookmarkService', function ($http, $q) {
 
         request.onupgradeneeded = function (event) {
             var db = event.target.result;
-            var objectStore = db.createObjectStore("bookmarks", {keyPath: "id"});
+            db.createObjectStore("bookmarks", {keyPath: "id"});
+            db.createObjectStore("favIcons", {keyPath: "id"});
         };
 
         return deferred.promise;
