@@ -41,7 +41,7 @@ bookmarkApp.controller('manageCtrl', function ($scope, $http, $q, bookmarkServic
     });
 
 
-    $scope.bookmarkService.loadFromCache().then(function (allBookmarks) {
+    $scope.bookmarkService.loadCachedBookmarks().then(function (allBookmarks) {
         $scope.allTags = $scope.bookmarkService.retrieveTags(allBookmarks);
     });
 });

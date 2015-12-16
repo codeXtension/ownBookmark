@@ -51,7 +51,7 @@ bookmarkApp.controller('backgroundCtrl', function ($scope, $http, $q, bookmarkSe
     var pollFromOC = function () {
         loadCredentials(function (app) {
                 $scope.bookmarkService.retrieveBookmarks($scope.app).then(function (result) {
-                    $scope.bookmarkService.saveToCache(result.data);
+                    $scope.bookmarkService.saveBookmarksToCache(result.data);
                     $scope.allBookmarks = result.data;
                 });
             }

@@ -44,7 +44,7 @@ bookmarkApp.service('bookmarkService', function ($http, $q) {
         return deferred.promise;
     };
 
-    this.loadFromCache = function () {
+    this.loadCachedBookmarks = function () {
         var deferred = $q.defer();
         var allBookmarks = [];
         window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
@@ -71,7 +71,7 @@ bookmarkApp.service('bookmarkService', function ($http, $q) {
         return deferred.promise;
     };
 
-    this.saveToCache = function (data) {
+    this.saveBookmarksToCache = function (data) {
         this.connectToDB().then(function (db) {
             db.transaction(["bookmarks"], "readwrite").objectStore("bookmarks").clear();
             for (i in data) {
