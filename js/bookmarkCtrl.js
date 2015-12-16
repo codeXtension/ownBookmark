@@ -185,6 +185,16 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
                     t.friends = [];
                     t.color = '#91205a';
 		            $scope.allTags.push(t);
+					
+					for (n = 0; n < bookmarkNodes[i].children.length; n++) {
+						var bookmark = {
+							url : bookmarkNodes[i].children[n].url,
+							title : bookmarkNodes[i].children[n].title,
+							tags : [bookmarkNodes[i].title]
+						};
+			
+						$scope.allBookmarks.push(bookmark);
+					}
         		}
         	}
             if ($scope.selectedTags.length == 0) {
