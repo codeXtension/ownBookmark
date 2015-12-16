@@ -7,6 +7,7 @@ bookmarkApp.controller('settingsCtrl', function ($scope, $http, bookmarkService,
 
     var DATA_SAVED_WITH_SUCCESS = '<span class="glyphicon glyphicon-floppy-saved" aria-hidden="true"></span>  Changes saved with success!';
     var DATA_SAVED_FAILURE = '<span class="glyphicon glyphicon-floppy-remove" aria-hidden="true"></span>  Changes cannot be saved, please verify your input!';
+    var INCORRECT_BOOKMARK_VERSION_ERROR = '<span class="glyphicon glyphicon-floppy-remove" aria-hidden="true"></span>  Please install the correct Bookmark version from <a href="https://github.com/codeXtension/bookmarks" target="_blank">here</a>!';
 
     $scope.security = {};
     $scope.security.isLoggedIn = false;
@@ -84,27 +85,40 @@ bookmarkApp.controller('settingsCtrl', function ($scope, $http, bookmarkService,
             data: $.param({'user': value.username, 'password': value.password})
         })
             .then(function (response) {
-                if (response.data.status == 'success') {
-                    deferred.resolve(true);
-                } else {
-                    deferred.resolve(false);
-                }
-            },
-            function(errorResponse){
-                deferred.resolve(false); //TODO this should be improved
-            });
+                    if (response.data.status == 'success') {
+                        var data = {};
+                        data.status = 'success';
+                        data.isValid = true;
+                        deferred.resolve(data);
+                    } else {
+                        var data = {};
+                        data.status = 'failure';
+                        data.isValid = false;
+                        deferred.resolve(data);
+                    }
+                },
+                function (errorResponse) {
+                    var data = {};
+                    data.status = 'error';
+                    data.isValid = false;
+                    deferred.resolve(data);
+                });
         return deferred.promise;
     };
 
     $scope.saveCredentials = function (user) {
         user.isValidating = true;
-        validateCredentials(user).then(function (success) {
+        validateCredentials(user).then(function (response) {
             user.isValidating = false;
-            if (success) {
+            if (response.isValid) {
                 $scope.bookmarkService.saveCredentials(user);
                 $.bootstrapGrowl(DATA_SAVED_WITH_SUCCESS, {type: 'success', width: 400, delay: 3000});
             } else {
-                $.bootstrapGrowl(DATA_SAVED_FAILURE, {type: 'danger', width: 450, delay: 3000});
+                if (response.status == 'failure') {
+                    $.bootstrapGrowl(DATA_SAVED_FAILURE, {type: 'danger', width: 450, delay: 3000});
+                } else {
+                    $.bootstrapGrowl(INCORRECT_BOOKMARK_VERSION_ERROR, {type: 'danger', width: 450, delay: 3000});
+                }
             }
         });
 
