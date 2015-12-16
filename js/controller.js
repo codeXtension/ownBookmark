@@ -69,6 +69,7 @@ bookmarkApp.service('bookmarkService', function ($http, $q, $rootScope) {
         } else {
             deferred.reject();
         }
+
         return deferred.promise;
     };
 
