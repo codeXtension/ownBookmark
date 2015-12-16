@@ -2,7 +2,7 @@
  * Created by eelkhour on 11.12.2015.
  */
 
-bookmarkApp.controller('backgroundCtrl', function ($scope, $http, bookmarkService) {
+bookmarkApp.controller('backgroundCtrl', function ($scope, $http, $q, bookmarkService) {
     $scope.bookmarkService = bookmarkService;
     $scope.allBookmarks = [];
 
@@ -19,7 +19,9 @@ bookmarkApp.controller('backgroundCtrl', function ($scope, $http, bookmarkServic
 
     $scope.$watchCollection('allBookmarks', function (newValue, oldValue) {
         initCurrentTab().then(function (tab) {
-            toggleCloudIcon(tab, $scope.allBookmarks);
+            if (tab != undefined) {
+                toggleCloudIcon(tab, $scope.allBookmarks);
+            }
         });
     });
 
