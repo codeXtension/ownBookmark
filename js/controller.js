@@ -1,7 +1,7 @@
 /**
  * Created by eelkhour on 24.11.2015.
  */
-var bookmarkApp = angular.module('bookmarkApp', ['ngResource', 'ngTagsInput', 'ui.validate']);
+var bookmarkApp = angular.module('bookmarkApp', ['ngResource', 'ngTagsInput']);
 
 var bookmarkUri = '/index.php/apps/bookmarks/bookmark';
 var queryParam = '?page=%';
@@ -69,6 +69,7 @@ bookmarkApp.service('bookmarkService', function ($http, $q, $rootScope) {
         } else {
             deferred.reject();
         }
+
         return deferred.promise;
     };
 
