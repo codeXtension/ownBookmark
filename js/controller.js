@@ -3,8 +3,7 @@
  */
 var bookmarkApp = angular.module('bookmarkApp', ['ngResource', 'ngTagsInput', 'ui.validate']);
 
-var bookmarkUri = '/index.php/apps/bookmarks/bookmark';
-var queryParam = '?page=%';
+var bookmarkUri = 'index.php/apps/bookmarks/public/rest/v1/bookmark';
 var tagCanvas;
 
 // adding chrome-extension:// to the list of safe urls
@@ -16,7 +15,7 @@ bookmarkApp.config([
     }
 ]);
 
-bookmarkApp.service('bookmarkService', function ($http, $q, $rootScope) {
+bookmarkApp.service('bookmarkService', function ($http, $q) {
     this.saveCredentials = function (appInfo) {
         chrome.storage.sync.set({'bookmarksData': appInfo}, function () {
             return 'Data saved with success!';
@@ -97,18 +96,21 @@ bookmarkApp.service('bookmarkService', function ($http, $q, $rootScope) {
         return deferred.promise;
     };
 
-    this.retrieveBookmarks = function (baseUrl, token, pagenumber) {
+    this.retrieveBookmarks = function (userInfo) {
         var deferred = $q.defer();
-
         $http({
-            url: baseUrl + bookmarkUri + queryParam.replace('%', pagenumber),
-            method: "GET",
+            url: userInfo.serverUrl + bookmarkUri,
+            method: "POST",
             processData: false,
             contentType: false,
             withCredentials: true,
-            headers: {'requestToken': token}
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            data: $.param({
+                'user': userInfo.username,
+                'password': userInfo.password,
+                'select[]': ['tags','id']
+            })
         }).then(function (response) {
-                data = response.data;
                 deferred.resolve(response);
             }, function (response) {
                 deferred.reject(response);
@@ -144,144 +146,6 @@ bookmarkApp.service('bookmarkService', function ($http, $q, $rootScope) {
             }
         }
         return allTags;
-    };
-
-    this.isLoggedIn = function (userId, serverUrl) {
-        var deferred = $q.defer();
-
-        var ocResult = {};
-        ocResult.accessToken = '';
-        ocResult.isLoggedIn = false;
-
-        $http({
-            url: serverUrl,
-            method: "GET",
-            withCredentials: true
-        })
-            .then(function (response) {
-                    var requestToken = response.data.match(/data-requesttoken="(.*)"/);
-                    var userToken = response.data.match(/data-user="(.*) data-requesttoken.*"/);
-                    if (!requestToken || requestToken.length < 2) {
-                        ocResult.isLoggedIn = false;
-                        deferred.resolve(ocResult);
-                    } else if (!userToken || userToken.length < 2 || (userToken.length == 2 && userToken[1].replace('"', '') != userId)) {
-                        console.log('expected ' + userId);
-                        ocResult.isLoggedIn = false;
-                        deferred.resolve(ocResult);
-                    } else {
-                        var accessToken = requestToken[1];
-                        var bookmarkUrl = serverUrl + bookmarkUri;
-
-                        $http({
-                            url: bookmarkUrl,
-                            method: "GET",
-                            withCredentials: true,
-                            headers: {'requestToken': accessToken}
-                        }).then(function (response) {
-                            ocResult.isLoggedIn = true;
-                            ocResult.accessToken = accessToken;
-                            deferred.resolve(ocResult);
-                        }, function (response) {
-                            ocResult.isLoggedIn = false;
-                            deferred.resolve(ocResult.isLoggedIn);
-                        });
-                    }
-                }
-            );
-
-        return deferred.promise;
-    };
-
-    this.logout = function (serverUrl, accessToken) {
-        var deferred = $q.defer();
-        var logoutUrl = serverUrl + '/index.php?logout=true&requesttoken=' + accessToken;
-        $http({
-            url: logoutUrl,
-            method: "GET",
-            withCredentials: true
-        }).then(function (response) {
-            var requestToken = response.data.match(/data-requesttoken="(.*)"/);
-            if (requestToken != undefined && requestToken.length == 2 && requestToken[1] == accessToken) {
-                deferred.resolve(true);
-            } else {
-                deferred.resolve(false);
-            }
-        });
-
-        return deferred.promise;
-    };
-
-    this.login = function (user, pwd, serverUrl) {
-        var deferred = $q.defer();
-        var requestToken = '';
-
-        var ocResult = {};
-        ocResult.accessToken = '';
-        ocResult.isLoggedIn = false;
-
-        $http({
-            url: serverUrl,
-            method: "GET",
-            withCredentials: true
-        })
-            .then(function (response) {
-                    requestToken = response.data.match(/data-requesttoken="(.*)"/);
-                    if (!requestToken || requestToken.length < 2) {
-                        ocResult.isLoggedIn = false;
-                        deferred.resolve(ocResult.isLoggedIn);
-                    }
-
-                    $http({
-                        url: serverUrl,
-                        method: "POST",
-                        processData: false,
-                        contentType: false,
-                        withCredentials: true,
-                        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                        data: $.param({'user': user, 'password': pwd, 'requesttoken': requestToken[1]})
-                    })
-                        .then(function (response) {
-                                var rt = response.data.match(/data-requesttoken="(.*)"/);
-                                var userToken = response.data.match(/data-user="(.*) data-requesttoken.*"/);
-                                if (!rt || rt.length < 2) {
-                                    ocResult.isLoggedIn = false;
-                                    deferred.resolve(ocResult.isLoggedIn);
-                                } else if (!userToken || userToken.length < 2 || (userToken.length == 2 && userToken[1].replace('"', '') != user)) {
-                                    console.log('expected ' + user);
-                                    ocResult.isLoggedIn = false;
-                                    deferred.resolve(ocResult);
-                                } else {
-                                    var accessToken = rt[1];
-                                    var bookmarkUrl = serverUrl + bookmarkUri;
-
-                                    $http({
-                                        url: bookmarkUrl,
-                                        method: "GET",
-                                        withCredentials: true,
-                                        headers: {'requestToken': accessToken}
-                                    }).then(function (response) {
-                                        ocResult.isLoggedIn = true;
-                                        ocResult.accessToken = accessToken;
-                                        deferred.resolve(ocResult.isLoggedIn);
-                                    }, function (response) {
-                                        ocResult.isLoggedIn = false;
-                                        deferred.resolve(ocResult.isLoggedIn);
-                                    });
-                                }
-                            },
-                            function (response) { // optional
-                                ocResult.isLoggedIn = false;
-                                deferred.resolve(ocResult.isLoggedIn);
-                            }
-                        );
-                },
-                function (response) { // optional
-                    ocResult.isLoggedIn = false;
-                    deferred.resolve(ocResult.isLoggedIn);
-                }
-            );
-
-        return deferred.promise;
     };
 
     this.connectToDB = function () {

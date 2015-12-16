@@ -48,53 +48,12 @@ bookmarkApp.controller('backgroundCtrl', function ($scope, $http, bookmarkServic
 
     var pollFromOC = function () {
         loadCredentials(function (app) {
-                $scope.bookmarkService.isLoggedIn(app.bookmarksData.username, app.bookmarksData.serverUrl).then(
-                    function (result) {
-                        if (!result.isLoggedIn) {
-                            $scope.bookmarkService.login(app.bookmarksData.username, app.bookmarksData.password, app.bookmarksData.serverUrl).then(
-                                function (result) {
-                                    $scope.security.isLoggedIn = result.isLoggedIn;
-                                    if (result.isLoggedIn) {
-                                        $scope.security.accessToken = result.accessToken;
-                                        $scope.security.message = "Login successful!";
-                                        retrieveBookmarks();
-                                    } else {
-                                        $scope.security.message = "Login failed, wrong credentials? ..."
-                                    }
-                                }
-                            );
-                        } else {
-                            $scope.security.accessToken = result.accessToken;
-                            $scope.security.message = "Already logged in!";
-                            $scope.security.isLoggedIn = true;
-                            retrieveBookmarks();
-                        }
-                    }
-                );
+                $scope.bookmarkService.retrieveBookmarks($scope.app).then(function (result) {
+                    $scope.bookmarkService.saveToCache(result.data);
+                    $scope.allBookmarks = result.data;
+                });
             }
         );
-    };
-
-    var retrieveBookmarks = function (tempData, page) {
-        if (page == null) {
-            page = 0;
-        }
-        if (tempData == null) {
-            tempData = [];
-        }
-        $scope.bookmarkService.retrieveBookmarks($scope.app.serverUrl, $scope.security.accessToken, page).then(function (result) {
-            var hasMoreData = result.data.data.length > 0;
-
-            if (hasMoreData) {
-                for (var i = 0; i < result.data.data.length; i++) {
-                    tempData.push(result.data.data[i]);
-                }
-                retrieveBookmarks(tempData, page + 1);
-            } else {
-                $scope.bookmarkService.saveToCache(tempData);
-                $scope.allBookmarks = tempData;
-            }
-        });
     };
 
     var toggleCloudIcon = function (tab, allBookmarks) {
