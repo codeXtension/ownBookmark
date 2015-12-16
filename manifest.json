@@ -1,6 +1,5 @@
 {
   "manifest_version": 2,
-  "content_security_policy": "script-src 'self' https://ajax.googleapis.com; object-src 'self'",
   "name": "ownCloud Bookmark",
   "description": "Bookmark extension for ownCloud 8.x",
   "version": "1.0",
@@ -19,7 +18,6 @@
     "contextMenus",
     "tabs",
     "storage",
-    "bookmarks",
     "activeTab",
     "declarativeContent",
     "https://ajax.googleapis.com/",
