@@ -160,48 +160,12 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
             $scope.bookmarkService.loadFromCache().then(function (allBookmarks) {
                 $scope.allBookmarks = allBookmarks;
                 $scope.allTags = $scope.bookmarkService.retrieveTags(allBookmarks);
-				addLocalTags();
-				
                 if ($scope.selectedTags.length == 0) {
                     $scope.filteredTags = $scope.allTags;
                 }
             });
         };
 
-        var addLocalTags = function () {
-    		var bookmarkTreeNodes = chrome.bookmarks.getTree(
-    				function(bookmarkTreeNodes) {
-    					if(bookmarkTreeNodes[0].children && bookmarkTreeNodes[0].children[0].children) {
-    						$('#bookmarks').append(addTags(bookmarkTreeNodes[0].children[0].children));
-    					}
-    				});
-        };
-
-        var addTags = function (bookmarkNodes) {
-        	for (i = 0; i < bookmarkNodes.length; i++) {
-        		if (bookmarkNodes[i].children && bookmarkNodes[i].children.length > 0) {
-            		var t = new TagNode(bookmarkNodes[i].title);
-                    t.setWeight(10);
-                    t.friends = [];
-                    t.color = '#91205a';
-		            $scope.allTags.push(t);
-					
-					for (n = 0; n < bookmarkNodes[i].children.length; n++) {
-						var bookmark = {
-							url : bookmarkNodes[i].children[n].url,
-							title : bookmarkNodes[i].children[n].title,
-							tags : [bookmarkNodes[i].title]
-						};
-			
-						$scope.allBookmarks.push(bookmark);
-					}
-        		}
-        	}
-            if ($scope.selectedTags.length == 0) {
-                $scope.filteredTags = $scope.allTags;
-            }
-        };
-		
         loadCachedBookmarks();
 
         $scope.bookmarkService.loadCredentials().then(
