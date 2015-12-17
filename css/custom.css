@@ -32,10 +32,11 @@ li {
 
 .bookmarkList li {
     display: block;
+	list-style-image: none;
 }
 
+/*
 .bookmarkList li:before {
-    /*Using a Bootstrap glyphicon as the bullet point*/
     content: "\e044";
     font-family: 'Glyphicons Halflings';
     font-size: 9px;
@@ -44,6 +45,7 @@ li {
     margin-right: 10px;
     color: #CCCCCC;
 }
+*/
 
 .vertical-center {
     min-height: 100%;  /* Fallback for browsers do NOT support vh unit */

@@ -42,7 +42,7 @@
                 </div>
                 <div class="panel-body">
                     <div class="input-group">
-                        <tags-input id="tagsInput" ng-model="selectedTags" class="bootstrap" style="width:600px"
+                        <tags-input id="tagsInput" ng-model="selectedTags" class="bootstrap" style="width:600px" 
                                     add-from-autocomplete-only="true" on-tag-added="updateTags($tag)"
                                     on-tag-removed="updateTags($tag)">
                             <auto-complete source="loadItems($query)"
@@ -61,7 +61,7 @@
                     </div>
                 </div>
                 <ul class="list-group bookmark-scrollable bookmarkList">
-                    <li data-ng-repeat="b in selectedBookmarks" class="list-group-item" style="list-style-image: url('chrome://favicon/{{b.url}}')">
+                    <li data-ng-repeat="b in selectedBookmarks" class="list-group-item">
 						<img src="chrome://favicon/{{b.url}}" />
                         <a title="{{b.title}}"
                            href="{{b.url}}"
