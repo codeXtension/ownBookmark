@@ -104,11 +104,13 @@ bookmarkApp.service('bookmarkService', function ($http, $q) {
             processData: false,
             contentType: false,
             withCredentials: true,
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': 'Basic ' + window.btoa(userInfo.username + ":" + userInfo.password)
+            },
             data: $.param({
                 'user': userInfo.username,
-                'password': userInfo.password,
-                'select[]': ['tags','id']
+                'select[]': ['tags', 'id']
             })
         }).then(function (response) {
                 deferred.resolve(response);
