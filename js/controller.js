@@ -11,8 +11,8 @@ var tagCanvas;
 bookmarkApp.config([
     '$compileProvider',
     function ($compileProvider) {
-        $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|tel|chrome-extension|chrome):/);
-        $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|tel|chrome-extension|chrome):/);
+        $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension|chrome):/);
+        $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension|chrome):/);
     }
 ]);
 
