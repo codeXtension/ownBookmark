@@ -1,7 +1,7 @@
 /**
  * Created by eelkhour on 24.11.2015.
  */
-var bookmarkApp = angular.module('bookmarkApp', ['ngResource', 'ngTagsInput']);
+var bookmarkApp = angular.module('bookmarkApp', []);
 
 var bookmarkUri = '/index.php/apps/bookmarks/bookmark';
 var queryParam = '?page=%';
@@ -11,8 +11,8 @@ var tagCanvas;
 bookmarkApp.config([
     '$compileProvider',
     function ($compileProvider) {
-        $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension):/);
-        $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension):/);
+        $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|tel|chrome-extension|chrome):/);
+        $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|tel|chrome-extension|chrome):/);
     }
 ]);
 

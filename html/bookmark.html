@@ -61,7 +61,8 @@
                     </div>
                 </div>
                 <ul class="list-group bookmark-scrollable bookmarkList">
-                    <li data-ng-repeat="b in selectedBookmarks" class="list-group-item">
+                    <li data-ng-repeat="b in selectedBookmarks" class="list-group-item" style="list-style-image: url('chrome://favicon/{{b.url}}')">
+						<img src="chrome://favicon/{{b.url}}" />
                         <a title="{{b.title}}"
                            href="{{b.url}}"
                            target="_blank">{{b.title}}</a>

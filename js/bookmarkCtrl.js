@@ -190,7 +190,7 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
 						var bookmark = {
 							url : bookmarkNodes[i].children[n].url,
 							title : bookmarkNodes[i].children[n].title,
-							tags : [bookmarkNodes[i].title]
+							tags : [bookmarkNodes[i].title],
 						};
 			
 						$scope.allBookmarks.push(bookmark);
