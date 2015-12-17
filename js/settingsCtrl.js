@@ -59,48 +59,35 @@ bookmarkApp.controller('settingsCtrl', function ($scope, $http, bookmarkService,
         );
     };
 
-    $scope.isLoggedIn = function () {
-        $scope.loadCredentials(function (app) {
-                $scope.bookmarkService.isLoggedIn(app.bookmarksData.serverUrl).then(
-                    function (result) {
-                        $scope.security.isLoggedIn = result.isLoggedIn;
-                        if (result.isLoggedIn) {
-                            $scope.app.message = "You are logged in!";
-                        }
-                    }
-                );
-            }
-        );
-    };
-
     var validateCredentials = function (value) {
         var deferred = $q.defer();
         $http({
-            url: value.serverUrl + '/index.php/apps/bookmarks/public/rest/v1/verifyuser',
+            url: value.serverUrl + '/index.php/apps/bookmarks/public/rest/v1/bookmark',
             method: "POST",
             processData: false,
             contentType: false,
             withCredentials: true,
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': 'Basic ' + window.btoa(value.username + ":" + value.password)
+            },
             data: $.param({'user': value.username, 'password': value.password})
         })
             .then(function (response) {
-                    if (response.data.status == 'success') {
-                        var data = {};
-                        data.status = 'success';
-                        data.isValid = true;
-                        deferred.resolve(data);
-                    } else {
-                        var data = {};
-                        data.status = 'failure';
-                        data.isValid = false;
-                        deferred.resolve(data);
-                    }
+                    var data = {};
+                    data.status = 'success';
+                    data.isValid = true;
+                    deferred.resolve(data);
                 },
                 function (errorResponse) {
                     var data = {};
-                    data.status = 'error';
-                    data.isValid = false;
+                    if (errorResponse.status == 401) {
+                        data.status = 'failure';
+                        data.isValid = false;
+                    } else {
+                        data.status = 'error';
+                        data.isValid = false;
+                    }
                     deferred.resolve(data);
                 });
         return deferred.promise;
