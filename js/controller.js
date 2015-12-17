@@ -109,7 +109,6 @@ bookmarkApp.service('bookmarkService', function ($http, $q) {
                 'Authorization': 'Basic ' + window.btoa(userInfo.username + ":" + userInfo.password)
             },
             data: $.param({
-                'user': userInfo.username,
                 'select[]': ['tags', 'id']
             })
         }).then(function (response) {
@@ -168,7 +167,6 @@ bookmarkApp.service('bookmarkService', function ($http, $q) {
         request.onupgradeneeded = function (event) {
             var db = event.target.result;
             db.createObjectStore("bookmarks", {keyPath: "id"});
-            db.createObjectStore("favIcons", {keyPath: "id"});
         };
 
         return deferred.promise;

@@ -70,8 +70,7 @@ bookmarkApp.controller('settingsCtrl', function ($scope, $http, bookmarkService,
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'Authorization': 'Basic ' + window.btoa(value.username + ":" + value.password)
-            },
-            data: $.param({'user': value.username, 'password': value.password})
+            }
         })
             .then(function (response) {
                     var data = {};
