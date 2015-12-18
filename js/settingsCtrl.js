@@ -33,32 +33,6 @@ bookmarkApp.controller('settingsCtrl', function ($scope, $http, bookmarkService,
             });
     };
 
-    $scope.login = function () {
-        $scope.loadCredentials(function (app) {
-                $scope.bookmarkService.isLoggedIn(app.bookmarksData.serverUrl).then(
-                    function (result) {
-                        if (!result.isLoggedIn) {
-                            $scope.bookmarkService.login(app.bookmarksData.username, app.bookmarksData.password, app.bookmarksData.serverUrl).then(
-                                function (result) {
-                                    $scope.security.isLoggedIn = result.isLoggedIn;
-                                    if (result.isLoggedIn) {
-                                        $scope.app.message = "Login successful!";
-
-                                    } else {
-                                        $scope.app.message = "Login failed!"
-                                    }
-                                }
-                            );
-                        } else {
-                            $scope.app.message = "Already logged in!";
-                            $scope.security.isLoggedIn = true;
-                        }
-                    }
-                );
-            }
-        );
-    };
-
     var validateCredentials = function (value) {
         var deferred = $q.defer();
         $http({
@@ -120,7 +94,7 @@ bookmarkApp.controller('settingsCtrl', function ($scope, $http, bookmarkService,
 
     $scope.loadCredentials();
     $scope.bookmarkService.getRefreshRate().then(function (value) {
-        $scope.app.refreshRate = value.refreshRate / 1000;
+        $scope.app.refreshRate = value.refreshRate / (60 * 1000);
     });
 
 });

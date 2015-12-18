@@ -24,7 +24,7 @@ bookmarkApp.service('bookmarkService', function ($http, $q) {
 
     this.setRefreshRate = function (value) {
         var deferred = $q.defer();
-        var refreshRate = value * 1000;
+        var refreshRate = value * 60 * 1000; // value is always in minutes
         chrome.storage.sync.set({'refreshRate': refreshRate}, function () {
             console.log('refresh rate updated to ' + refreshRate + ' milli seconds.');
             deferred.resolve();
@@ -37,7 +37,7 @@ bookmarkApp.service('bookmarkService', function ($http, $q) {
         var deferred = $q.defer();
         chrome.storage.sync.get('refreshRate', function (item) {
             if (item == undefined || item.refreshRate == undefined) {
-                item.refreshRate = 60;
+                item.refreshRate = 5; // default value is 5 min.
             }
             deferred.resolve(item);
         });
