@@ -9,8 +9,8 @@
     <script type="text/javascript" src="../js/libs/jquery-2.1.4.min.js"></script>
     <script type="text/javascript" src="../js/libs/bootstrap.min.js"></script>
     <script type="text/javascript" src="../js/libs/angular.min.js"></script>
+    <script type="text/javascript" src="../js/libs/validate.js"></script>
     <script type="text/javascript" src="../js/libs/angular-resource.min.js"></script>
-    <script type="text/javascript" src="../js/libs/validator.js"></script>
     <script type="text/javascript" src="../js/libs/jquery.tagcanvas.js"></script>
     <script type="text/javascript" src="../js/libs/bootstrap3-typeahead.js"></script>
     <script type="text/javascript" src="../js/libs/ng-tags-input.min.js"></script>
@@ -42,7 +42,7 @@
                 </div>
                 <div class="panel-body">
                     <div class="input-group">
-                        <tags-input id="tagsInput" ng-model="selectedTags" class="bootstrap" style="width:600px" 
+                        <tags-input id="tagsInput" ng-model="selectedTags" class="bootstrap" style="width:600px"
                                     add-from-autocomplete-only="true" on-tag-added="updateTags($tag)"
                                     on-tag-removed="updateTags($tag)">
                             <auto-complete source="loadItems($query)"

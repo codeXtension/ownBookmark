@@ -2,10 +2,12 @@
  * Created by eelkhour on 27.11.2015.
  */
 
-bookmarkApp.controller('settingsCtrl', function ($scope, $http, bookmarkService) {
+bookmarkApp.controller('settingsCtrl', function ($scope, $http, bookmarkService, $q) {
     $scope.bookmarkService = bookmarkService;
 
     var DATA_SAVED_WITH_SUCCESS = '<span class="glyphicon glyphicon-floppy-saved" aria-hidden="true"></span>  Changes saved with success!';
+    var DATA_SAVED_FAILURE = '<span class="glyphicon glyphicon-floppy-remove" aria-hidden="true"></span>  Changes cannot be saved, please verify your input!';
+    var INCORRECT_BOOKMARK_VERSION_ERROR = '<span class="glyphicon glyphicon-floppy-remove" aria-hidden="true"></span>  Please install the correct Bookmark version from <a href="https://github.com/codeXtension/bookmarks" target="_blank">here</a>!';
 
     $scope.security = {};
     $scope.security.isLoggedIn = false;
@@ -15,6 +17,7 @@ bookmarkApp.controller('settingsCtrl', function ($scope, $http, bookmarkService)
     $scope.app.username = '';
     $scope.app.password = '';
     $scope.app.serverUrl = '';
+    $scope.app.isValidating = false;
     $scope.app.refreshRate = 60;
     $scope.app.message = undefined;
 
@@ -56,20 +59,6 @@ bookmarkApp.controller('settingsCtrl', function ($scope, $http, bookmarkService)
         );
     };
 
-<<<<<<< HEAD
-    $scope.isLoggedIn = function () {
-        $scope.loadCredentials(function (app) {
-                $scope.bookmarkService.isLoggedIn(app.bookmarksData.serverUrl).then(
-                    function (result) {
-                        $scope.security.isLoggedIn = result.isLoggedIn;
-                        if (result.isLoggedIn) {
-                            $scope.app.message = "You are logged in!";
-                        }
-                    }
-                );
-            }
-        );
-=======
     var validateCredentials = function (value) {
         var deferred = $q.defer();
         $http({
@@ -101,12 +90,24 @@ bookmarkApp.controller('settingsCtrl', function ($scope, $http, bookmarkService)
                     deferred.resolve(data);
                 });
         return deferred.promise;
->>>>>>> refs/remotes/origin/master
     };
 
     $scope.saveCredentials = function (user) {
-        $scope.bookmarkService.saveCredentials(user);
-        $.bootstrapGrowl(DATA_SAVED_WITH_SUCCESS, {type: 'success', width: 400, delay: 3000});
+        user.isValidating = true;
+        validateCredentials(user).then(function (response) {
+            user.isValidating = false;
+            if (response.isValid) {
+                $scope.bookmarkService.saveCredentials(user);
+                $.bootstrapGrowl(DATA_SAVED_WITH_SUCCESS, {type: 'success', width: 400, delay: 3000});
+            } else {
+                if (response.status == 'failure') {
+                    $.bootstrapGrowl(DATA_SAVED_FAILURE, {type: 'danger', width: 450, delay: 3000});
+                } else {
+                    $.bootstrapGrowl(INCORRECT_BOOKMARK_VERSION_ERROR, {type: 'danger', width: 450, delay: 3000});
+                }
+            }
+        });
+
 
     };
 

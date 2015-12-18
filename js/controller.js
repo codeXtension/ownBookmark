@@ -1,7 +1,7 @@
 /**
  * Created by eelkhour on 24.11.2015.
  */
-var bookmarkApp = angular.module('bookmarkApp', []);
+var bookmarkApp = angular.module('bookmarkApp', ['ngResource', 'ngTagsInput', 'ui.validate']);
 
 var bookmarkUri = 'index.php/apps/bookmarks/public/rest/v1/bookmark';
 var tagCanvas;
@@ -10,8 +10,8 @@ var tagCanvas;
 bookmarkApp.config([
     '$compileProvider',
     function ($compileProvider) {
-        $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension|chrome):/);
-        $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension|chrome):/);
+        $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension|chrome|tel):/);
+        $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension|chrome|tel):/);
     }
 ]);
 
@@ -134,6 +134,7 @@ bookmarkApp.service('bookmarkService', function ($http, $q) {
                 if (this.indexOfTag(tags[j], allTags) == -1) {
                     var t = new TagNode(tags[j].trim());
                     t.setWeight(10);
+                    t.color = '#2E6DA4';
                     t.friends = [];
                     allTags.push(t);
                 } else {
@@ -231,6 +232,7 @@ bookmarkApp.directive('afterRender', ['$timeout', function ($timeout) {
 function TagNode(text) {
     this.text = text;
     this.weight = 1;
+    this.color = 'blue';
     this.friends = [];
 
     this.setWeight = function (value) {

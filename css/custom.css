@@ -35,18 +35,6 @@ li {
 	list-style-image: none;
 }
 
-/*
-.bookmarkList li:before {
-    content: "\e044";
-    font-family: 'Glyphicons Halflings';
-    font-size: 9px;
-    float: left;
-    margin-top: 4px;
-    margin-right: 10px;
-    color: #CCCCCC;
-}
-*/
-
 .vertical-center {
     min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
     min-height: 100vh; /* These two lines are counted as one :-)       */
