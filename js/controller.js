@@ -1,7 +1,7 @@
 /**
  * Created by eelkhour on 24.11.2015.
  */
-var bookmarkApp = angular.module('bookmarkApp', ['ngResource', 'ngTagsInput', 'ui.validate']);
+var bookmarkApp = angular.module('bookmarkApp', []);
 
 var bookmarkUri = 'index.php/apps/bookmarks/public/rest/v1/bookmark';
 var tagCanvas;
@@ -10,8 +10,8 @@ var tagCanvas;
 bookmarkApp.config([
     '$compileProvider',
     function ($compileProvider) {
-        $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension):/);
-        $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension):/);
+        $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension|chrome):/);
+        $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension|chrome):/);
     }
 ]);
 
@@ -68,6 +68,7 @@ bookmarkApp.service('bookmarkService', function ($http, $q) {
         } else {
             deferred.reject();
         }
+
         return deferred.promise;
     };
 
