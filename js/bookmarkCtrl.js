@@ -157,7 +157,7 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
         };
 
         var loadCachedBookmarks = function () {
-            $scope.bookmarkService.loadFromCache().then(function (allBookmarks) {
+            $scope.bookmarkService.loadCachedBookmarks().then(function (allBookmarks) {
                 $scope.allBookmarks = allBookmarks;
                 $scope.allTags = $scope.bookmarkService.retrieveTags(allBookmarks);
 				addLocalTags();

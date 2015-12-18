@@ -56,6 +56,7 @@ bookmarkApp.controller('settingsCtrl', function ($scope, $http, bookmarkService)
         );
     };
 
+<<<<<<< HEAD
     $scope.isLoggedIn = function () {
         $scope.loadCredentials(function (app) {
                 $scope.bookmarkService.isLoggedIn(app.bookmarksData.serverUrl).then(
@@ -68,6 +69,39 @@ bookmarkApp.controller('settingsCtrl', function ($scope, $http, bookmarkService)
                 );
             }
         );
+=======
+    var validateCredentials = function (value) {
+        var deferred = $q.defer();
+        $http({
+            url: value.serverUrl + '/index.php/apps/bookmarks/public/rest/v1/bookmark',
+            method: "POST",
+            processData: false,
+            contentType: false,
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': 'Basic ' + window.btoa(value.username + ":" + value.password)
+            }
+        })
+            .then(function (response) {
+                    var data = {};
+                    data.status = 'success';
+                    data.isValid = true;
+                    deferred.resolve(data);
+                },
+                function (errorResponse) {
+                    var data = {};
+                    if (errorResponse.status == 401) {
+                        data.status = 'failure';
+                        data.isValid = false;
+                    } else {
+                        data.status = 'error';
+                        data.isValid = false;
+                    }
+                    deferred.resolve(data);
+                });
+        return deferred.promise;
+>>>>>>> refs/remotes/origin/master
     };
 
     $scope.saveCredentials = function (user) {
