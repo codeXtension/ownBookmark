@@ -5,9 +5,9 @@
 bookmarkApp.controller('settingsCtrl', function ($scope, $http, bookmarkService, $q) {
     $scope.bookmarkService = bookmarkService;
 
-    var DATA_SAVED_WITH_SUCCESS = '<span class="glyphicon glyphicon-floppy-saved" aria-hidden="true"></span>  Changes saved with success!';
-    var DATA_SAVED_FAILURE = '<span class="glyphicon glyphicon-floppy-remove" aria-hidden="true"></span>  Changes cannot be saved, please verify your input!';
-    var INCORRECT_BOOKMARK_VERSION_ERROR = '<span class="glyphicon glyphicon-floppy-remove" aria-hidden="true"></span>  Please install the correct Bookmark version from <a href="https://github.com/codeXtension/bookmarks" target="_blank">here</a>!';
+    var DATA_SAVED_WITH_SUCCESS = '<span class="fa fa-check" aria-hidden="true"></span>  Changes saved with success!';
+    var DATA_SAVED_FAILURE = '<span class="fa fa-close" aria-hidden="true"></span>  Changes cannot be saved, please verify your input!';
+    var INCORRECT_BOOKMARK_VERSION_ERROR = '<span class="fa fa-close" aria-hidden="true"></span>  Please install the correct Bookmark version from <a href="https://github.com/codeXtension/bookmarks" target="_blank">here</a>!';
 
     $scope.security = {};
     $scope.security.isLoggedIn = false;

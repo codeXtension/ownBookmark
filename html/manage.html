@@ -2,7 +2,7 @@
 <html lang="en" ng-app="bookmarkApp">
 <head>
     <link rel="stylesheet" href="../css/libs/bootstrap.min.css"/>
-    <link rel="stylesheet" href="../css/libs/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="../css/libs/font-awesome.css">
     <link rel="stylesheet" href="../css/libs/ng-tags-input.bootstrap.min.css"/>
     <link rel="stylesheet" href="../css/libs/ng-tags-input.min.css"/>
     <link rel="stylesheet" href="../css/custom.css"/>
@@ -20,48 +20,35 @@
     <title>Manage Bookmarks</title>
 </head>
 <body ng-controller="manageCtrl">
-<div class="container-fluid" style="width: 400px">
+<div class="container-fluid" style="width: 380px">
     <form data-toggle="validator" name="bookmarkForm" role="form">
-        <div class="form-group form-group-sm">
-            <div class="media">
-                <div class="media-left">
-                        <img  style="width: 16px; height: 16px;top: 10px; position: relative" class="media-object" ng-src="{{app.favIconUrl}}">
-                </div>
-                <div class="media-body">
-                    <h4>Add Bookmark</h4>
-                </div>
+        <div class="form-group-sm">
+            <label for="title" style=";margin-top: 5px;" class="panel-title">ownBookmarks</label>
+            <hr class="specialHr"/>
+            <div class="input-group-sm">
+                <input type="text" maxlength="255" required="required" ng-model="app.title" id="title"
+                       class="form-control"
+                       placeholder=""/>
+                <input type="hidden" ng-model="app.url" value="{{app.url}}" id="url"/>
             </div>
-        </div>
-        <div class="form-group form-group-sm">
-            <label class="sr-only" for="title">Title</label>
 
-            <div class="input-group">
-                <div class="input-group-addon">TITLE</div>
-                <input type="text" required="required" ng-model="app.title" id="title" class="form-control"
-                       placeholder="">
+            <div class="input-group-sm">
+                <tags-input id="tagsInput" ng-model="app.tags" style="height: 36px" display-property="text"
+                            required="required"
+                            add-from-autocomplete-only="false">
+                    <auto-complete source="loadItems($query)"
+                                   min-length="2"
+                                   debounce-delay="0"
+                                   max-results="10"></auto-complete>
+                </tags-input>
             </div>
         </div>
-        <div class="form-group form-group-sm">
-            <label class="sr-only" for="url">URL</label>
-
-            <div class="input-group">
-                <div class="input-group-addon">URL</div>
-                <input type="URL" required="required" ng-model="app.url" id="url" class="form-control"
-                       placeholder="">
-            </div>
-        </div>
-        <div class="input-group">
-            <tags-input id="tagsInput" ng-model="app.tags" class="bootstrap" style="width:600px"
-                        add-from-autocomplete-only="false">
-                <auto-complete source="loadItems($query)"
-                               min-length="2"
-                               debounce-delay="0"
-                               max-results="10"></auto-complete>
-            </tags-input>
-        </div>
-        <div class="form-group">
-            <button type="submit" ng-disabled="bookmarkForm.$invalid" ng-click="addBookmark(app)"
-                    class="btn btn-primary">Add bookmark
+        <div class="input-group-sm pull-right" style="margin-bottom: 5px;margin-top: 5px;">
+            <button type="submit" ng-click="removeBookmark()" ng-show="app.exists"
+                    class="btn btn-xs btn-danger"><span class="fa fa-remove" aria-hidden="true"></span>&nbsp;Remove
+            </button>
+            <button type="submit" ng-disabled="bookmarkForm.$invalid" ng-click="saveBookmark()"
+                    class="btn btn-xs btn-success"><span class="fa fa-save" aria-hidden="true"></span>&nbsp;Save
             </button>
         </div>
     </form>

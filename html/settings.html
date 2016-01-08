@@ -2,7 +2,7 @@
 <html lang="en" ng-app="bookmarkApp">
 <head>
     <link rel="stylesheet" href="../css/libs/bootstrap.min.css"/>
-    <link rel="stylesheet" href="../css/libs/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="../css/libs/font-awesome.css">
     <link rel="stylesheet" href="../css/libs/ng-tags-input.bootstrap.min.css"/>
     <link rel="stylesheet" href="../css/libs/ng-tags-input.min.css"/>
     <link rel="stylesheet" href="../css/custom.css"/>
@@ -26,7 +26,7 @@
         <div class="col-md-4"><img src="../images/owncloud-logo.png" class="img-responsive center-block marginTopMinus50px"/>
         </div><div class="col-md-3">
         <form name="settingsForm" role="form">
-                <h3><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> User Credentials</h3>
+            <h3><span class="fa fa-eye" aria-hidden="true"></span> User Credentials</h3>
 
                 <div class="form-group">
                     <label class="sr-only" for="url">ownCloud</label>
@@ -60,13 +60,13 @@
                 <div class="form-group">
                     <button type="submit" ng-disabled="settingsForm.$invalid || app.isValidating"
                             ng-click="saveCredentials(app)"
-                            class="btn btn-primary">Save credentials
+                            class="btn btn-primary pull-right">Save credentials
                     </button><span ng-show="app.isValidating" style="color: #2b669a">    <img src="../images/hourglass.gif" /> Validating, please wait ...</span>
                 </div>
             </form>
         </div><div class="col-md-3">
         <form name="additionalSettingsForm" role="form">
-                <h3><span class="glyphicon glyphicon-briefcase" aria-hidden="true"></span> Additional Settings</h3>
+            <h3><span class="fa fa-briefcase" aria-hidden="true"></span> Additional Settings</h3>
 
                 <div class="form-group">
                     <label class="sr-only" for="refreshrate">Refresh rate</label>
@@ -83,7 +83,7 @@
                 </div>
                 <div class="form-group">
                     <button type="submit" ng-disabled="additionalSettingsForm.$invalid" ng-click="saveRefreshRate(app)"
-                            class="btn btn-primary">Save Settings
+                            class="btn btn-primary pull-right">Save Settings
                     </button>
                 </div>
             </form>

@@ -42,6 +42,8 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
         $scope.$watchCollection('filteredTags', function (newValue, oldValue) {
             window.setTimeout(function () {
                 if (newValue.length > 0) {
+                    $('#tagsCanvas').attr('width', window.innerWidth - 650);
+                    $('#tagsCanvas').attr('height', window.innerHeight - 50);
                     tagCanvas = $('#tagsCanvas').tagcanvas({
                         textColour: null,
                         outlineColour: 'transparent',
@@ -159,6 +161,7 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
         var loadCachedBookmarks = function () {
             $scope.bookmarkService.loadCachedBookmarks().then(function (allBookmarks) {
                 $scope.allBookmarks = allBookmarks;
+                $scope.selectedBookmarks = allBookmarks;
                 $scope.allTags = $scope.bookmarkService.retrieveTags(allBookmarks);
                 addLocalTags().then(function () {
                     if ($scope.selectedTags.length == 0) {

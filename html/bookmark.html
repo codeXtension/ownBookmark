@@ -2,7 +2,7 @@
 <html lang="en" ng-app="bookmarkApp">
 <head>
     <link rel="stylesheet" href="../css/libs/bootstrap.min.css"/>
-    <link rel="stylesheet" href="../css/libs/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="../css/libs/font-awesome.css">
     <link rel="stylesheet" href="../css/libs/ng-tags-input.bootstrap.min.css"/>
     <link rel="stylesheet" href="../css/libs/ng-tags-input.min.css"/>
     <link rel="stylesheet" href="../css/custom.css"/>
@@ -25,7 +25,7 @@
     <div class="row">
         <div class="col-lg-8">
             <div id="tagsContainer">
-                <canvas ng-right-click="goBackOneLevel()" width="1200px" height="800px" id="tagsCanvas">
+                <canvas ng-right-click="goBackOneLevel()" id="tagsCanvas">
                     <p>Anything in here will be replaced on browsers that support the canvas element</p>
                     <ul class="weighted" id="weightTags">
                         <li data-ng-repeat="t in filteredTags">
@@ -37,12 +37,14 @@
         </div>
         <div class="col-md-4">
             <div class="panel panel-info">
-                <div class="panel-heading"><span class="glyphicon glyphicon-link" aria-hidden="true"></span> <a href="{{serverUrl}}" target="_blank">Bookmarks</a>
-                    <span class="glyphicon glyphicon-cog pull-right" style="cursor:pointer;"  ng-click="openOptions()"/>
+                <div class="panel-heading"><span class="fa fa-link" aria-hidden="true"></span> <a style="color: white"
+                                                                                                  href="{{serverUrl}}"
+                                                                                                  target="_blank">Bookmarks</a>
+                    <span class="fa fa-cog pull-right" style="cursor:pointer;" ng-click="openOptions()"/>
                 </div>
                 <div class="panel-body">
-                    <div class="input-group">
-                        <tags-input id="tagsInput" ng-model="selectedTags" class="bootstrap" style="width:600px"
+                    <div class="form-group-sm">
+                        <tags-input id="tagsInput" ng-model="selectedTags" class="bootstrap"
                                     add-from-autocomplete-only="true" on-tag-added="updateTags($tag)"
                                     on-tag-removed="updateTags($tag)">
                             <auto-complete source="loadItems($query)"
@@ -51,21 +53,17 @@
                                            max-results="10"></auto-complete>
                         </tags-input>
                     </div>
-                    <div class="input-group">
-                        <input type="search" ng-model="filterText" id="searchText" class="form-control">
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" type="button">
-                                <span class="glyphicon glyphicon-search"></span>
-                            </button>
-                        </span>
+                    <div class="form-group-sm">
+                        <input type="search" ng-model="filterText" id="searchText" class="form-control"
+                               placeholder="Search ...">
                     </div>
                 </div>
                 <ul class="list-group bookmark-scrollable bookmarkList">
                     <li data-ng-repeat="b in selectedBookmarks" class="list-group-item">
-						<img src="chrome://favicon/{{b.url}}" />
+                        <img src="chrome://favicon/{{b.url}}"/>&nbsp;
                         <a title="{{b.title}}"
                            href="{{b.url}}"
-                           target="_blank">{{b.title}}</a>
+                           target="_blank" style="font-family: Tahoma,Helvetica,Arial">{{b.title}}</a>
                     </li>
                 </ul>
             </div>

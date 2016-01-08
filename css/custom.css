@@ -4,18 +4,19 @@
 }
 
 li {
-	max-width: 100%;
-  	white-space: nowrap;
-  	overflow: hidden;
-  	text-overflow: ellipsis;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 ::-webkit-scrollbar {
     width: 7px;
     height: 5px;
-    background-color: rgba(255,255,255, 0);
+    background-color: rgba(255, 255, 255, 0);
     -webkit-border-radius: 0px;
 }
+
 ::-webkit-scrollbar:hover {
     width: 9px;
 }
@@ -26,17 +27,17 @@ li {
 }
 
 ::-webkit-scrollbar-thumb:hover,
-::-webkit-scrollbar-thumb:active  {
+::-webkit-scrollbar-thumb:active {
     background: #a6c1d0;
 }
 
 .bookmarkList li {
     display: block;
-	list-style-image: none;
+    list-style-image: none;
 }
 
 .vertical-center {
-    min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
+    min-height: 100%; /* Fallback for browsers do NOT support vh unit */
     min-height: 100vh; /* These two lines are counted as one :-)       */
 
     display: flex;
@@ -44,5 +45,17 @@ li {
 }
 
 .marginTopMinus50px {
-    margin-top:-50px;
+    margin-top: -50px;
+}
+
+tags-input .autocomplete, tags-input .tags {
+    border-radius: 1px !important;
+}
+
+.specialHr {
+    margin-top: 5px;
+    margin-bottom: 10px;
+    width: 101vw;
+    position: relative;
+    left: -20px;
 }
