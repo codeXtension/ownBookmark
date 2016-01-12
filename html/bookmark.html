@@ -65,7 +65,7 @@
                         <a title="{{b.title}}"
                            href="{{b.url}}"
                            target="_blank" style="font-family: Tahoma,Helvetica,Arial">{{b.title}}</a>&nbsp;&nbsp;<span
-                            ng-click="removeBookmark(b.id)" id="close" ng-show="showMe"
+                            ng-click="removeBookmark(b.id)" id="close" ng-show="showMe && b.id!=undefined"
                             style="color:#a6c1d0;cursor: pointer" class="fa fa-close pull-right"></span>
                     </li>
                 </ul>
