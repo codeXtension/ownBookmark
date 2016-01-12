@@ -2,7 +2,7 @@
  * Created by eelkhour on 27.11.2015.
  */
 
-bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService, $q) {
+bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService, $q, $interval) {
         $scope.bookmarkService = bookmarkService;
 
         $scope.serverUrl = '';
@@ -49,6 +49,8 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
                         outlineColour: 'transparent',
                         weightFrom: 'data-weight',
                         weightSize: 5,
+                        zoom: 1.15,
+                        noTagsMessage: false,
                         weightSizeMax: 15,
                         weightSizeMin: 7,
                         dragControl: true,
@@ -161,11 +163,22 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
         var loadCachedBookmarks = function () {
             $scope.bookmarkService.loadCachedBookmarks().then(function (allBookmarks) {
                 $scope.allBookmarks = allBookmarks;
-                $scope.selectedBookmarks = allBookmarks;
                 $scope.allTags = $scope.bookmarkService.retrieveTags(allBookmarks);
                 addLocalTags().then(function () {
+
                     if ($scope.selectedTags.length == 0) {
                         $scope.filteredTags = $scope.allTags;
+                        $scope.selectedBookmarks = allBookmarks;
+                    } else {
+                        var tempSelectedTags = [];
+                        for (var i = 0; i < $scope.selectedTags.length; i++) {
+                            var tag = findTagByText($scope.selectedTags[i].text, $scope.allTags);
+                            if (tag != undefined) {
+                                tempSelectedTags.push(findTagByText($scope.selectedTags[i].text, $scope.allTags));
+                            }
+                        }
+
+                        $scope.selectedTags = tempSelectedTags;
                     }
                 });
             });
@@ -206,6 +219,15 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
         };
 
     loadCachedBookmarks();
+
+    chrome.storage.onChanged.addListener(function (changes, namespace) {
+        for (key in changes) {
+            var storageChange = changes[key];
+            if (key == 'needsReloading' && storageChange.newValue == true) {
+                loadCachedBookmarks();
+            }
+        }
+    });
 
         $scope.bookmarkService.loadCredentials().then(
             function (app) {

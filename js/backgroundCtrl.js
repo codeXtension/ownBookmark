@@ -2,7 +2,7 @@
  * Created by eelkhour on 11.12.2015.
  */
 
-bookmarkApp.controller('backgroundCtrl', function ($scope, $http, $q, bookmarkService) {
+bookmarkApp.controller('backgroundCtrl', function ($scope, $http, $q, bookmarkService, $interval) {
     $scope.bookmarkService = bookmarkService;
     $scope.allBookmarks = [];
 
@@ -33,7 +33,6 @@ bookmarkApp.controller('backgroundCtrl', function ($scope, $http, $q, bookmarkSe
 
         return deferred.promise;
     };
-
 
     var loadCredentials = function (callback) {
         $scope.bookmarkService.loadCredentials().then(
@@ -83,6 +82,17 @@ bookmarkApp.controller('backgroundCtrl', function ($scope, $http, $q, bookmarkSe
         window.setInterval(function () {
             pollFromOC();
         }, value.refreshRate);
+    });
+
+    chrome.storage.onChanged.addListener(function (changes, namespace) {
+        for (key in changes) {
+            var storageChange = changes[key];
+            if (key == 'needsReloading' && storageChange.newValue == true) {
+                $scope.bookmarkService.setNeedReloading(false).then(function () {
+                    pollFromOC();
+                });
+            }
+        }
     });
 
     chrome.runtime.onInstalled.addListener(function () {

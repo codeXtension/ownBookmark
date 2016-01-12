@@ -59,3 +59,11 @@ tags-input .autocomplete, tags-input .tags {
     position: relative;
     left: -20px;
 }
+
+.shadow {
+    box-shadow: 0 0 5px #3db5d8;
+}
+
+.coloredBackground {
+    background-color: #FDFCFC;
+}

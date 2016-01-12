@@ -16,6 +16,27 @@ bookmarkApp.config([
 ]);
 
 bookmarkApp.service('bookmarkService', function ($http, $q) {
+
+    this.setNeedReloading = function (value) {
+        var deferred = $q.defer();
+        chrome.storage.sync.set({'needsReloading': value}, function () {
+            deferred.resolve();
+        });
+
+        return deferred.promise;
+    };
+
+    this.getNeedReloading = function () {
+        var deferred = $q.defer();
+        chrome.storage.sync.get('needsReloading', function (item) {
+            if (item == undefined || item.needsReloading == undefined) {
+                item.needsReloading = false; // default value is 5 min.
+            }
+            deferred.resolve(item);
+        });
+        return deferred.promise;
+    };
+
     this.saveCredentials = function (appInfo) {
         chrome.storage.sync.set({'bookmarksData': appInfo}, function () {
             return 'Data saved with success!';
