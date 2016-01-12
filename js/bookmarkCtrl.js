@@ -12,6 +12,7 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
         $scope.selectedTags = [];
         $scope.selectedBookmarks = [];
         $scope.filterText = '';
+    $scope.displayLocalBookmarks = false;
 
         $scope.$watchCollection('selectedTags', function () {
             window.setTimeout(function () {
@@ -164,25 +165,33 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
             $scope.bookmarkService.loadCachedBookmarks().then(function (allBookmarks) {
                 $scope.allBookmarks = allBookmarks;
                 $scope.allTags = $scope.bookmarkService.retrieveTags(allBookmarks);
-                addLocalTags().then(function () {
+                if ($scope.displayLocalBookmarks) {
+                    addLocalTags().then(function () {
+                        prepareUI(allBookmarks);
+                    });
+                } else {
+                    prepareUI(allBookmarks);
+                }
 
-                    if ($scope.selectedTags.length == 0) {
-                        $scope.filteredTags = $scope.allTags;
-                        $scope.selectedBookmarks = allBookmarks;
-                    } else {
-                        var tempSelectedTags = [];
-                        for (var i = 0; i < $scope.selectedTags.length; i++) {
-                            var tag = findTagByText($scope.selectedTags[i].text, $scope.allTags);
-                            if (tag != undefined) {
-                                tempSelectedTags.push(findTagByText($scope.selectedTags[i].text, $scope.allTags));
-                            }
-                        }
-
-                        $scope.selectedTags = tempSelectedTags;
-                    }
-                });
             });
         };
+
+    var prepareUI = function (allBookmarks) {
+        if ($scope.selectedTags.length == 0) {
+            $scope.filteredTags = $scope.allTags;
+            $scope.selectedBookmarks = allBookmarks;
+        } else {
+            var tempSelectedTags = [];
+            for (var i = 0; i < $scope.selectedTags.length; i++) {
+                var tag = findTagByText($scope.selectedTags[i].text, $scope.allTags);
+                if (tag != undefined) {
+                    tempSelectedTags.push(findTagByText($scope.selectedTags[i].text, $scope.allTags));
+                }
+            }
+
+            $scope.selectedTags = tempSelectedTags;
+        }
+    };
 
         var addLocalTags = function () {
             var deferred = $q.defer();
@@ -226,7 +235,7 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
             if (key == 'needsReloading' && storageChange.newValue == true) {
                 loadCachedBookmarks();
             }
-        }
+            }
     });
 
         $scope.bookmarkService.loadCredentials().then(
@@ -234,11 +243,12 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
                 $scope.serverUrl = app.bookmarksData.serverUrl;
             });
 
-        $scope.bookmarkService.getRefreshRate().then(function (value) {
-            console.log('refresh rate:' + value.refreshRate);
+    $scope.bookmarkService.getSettings().then(function (value) {
+        console.log('refresh rate:' + value.settings.refreshRate);
+        $scope.displayLocalBookmarks = value.settings.displayLocalBookmarks;
             window.setInterval(function () {
                 loadCachedBookmarks();
-            }, value.refreshRate);
+            }, value.settings.refreshRate);
         });
     }
 );

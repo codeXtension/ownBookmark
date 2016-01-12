@@ -19,6 +19,7 @@ bookmarkApp.controller('settingsCtrl', function ($scope, $http, bookmarkService,
     $scope.app.serverUrl = '';
     $scope.app.isValidating = false;
     $scope.app.refreshRate = 60;
+    $scope.app.displayLocalBookmarks = false;
     $scope.app.message = undefined;
 
     $scope.loadCredentials = function (callback) {
@@ -85,16 +86,17 @@ bookmarkApp.controller('settingsCtrl', function ($scope, $http, bookmarkService,
 
     };
 
-    $scope.saveRefreshRate = function (app) {
-        $scope.bookmarkService.setRefreshRate(app.refreshRate).then(function () {
+    $scope.saveSettings = function (app) {
+        $scope.bookmarkService.setSettings(app.refreshRate, app.displayLocalBookmarks).then(function () {
             $.bootstrapGrowl(DATA_SAVED_WITH_SUCCESS, {type: 'success', width: 400, delay: 3000});
         });
 
     };
 
     $scope.loadCredentials();
-    $scope.bookmarkService.getRefreshRate().then(function (value) {
-        $scope.app.refreshRate = value.refreshRate / (60 * 1000);
+    $scope.bookmarkService.getSettings().then(function (value) {
+        $scope.app.refreshRate = value.settings.refreshRate / (60 * 1000);
+        $scope.app.displayLocalBookmarks = value.settings.displayLocalBookmarks;
     });
 
 });

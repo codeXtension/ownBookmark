@@ -77,11 +77,11 @@ bookmarkApp.controller('backgroundCtrl', function ($scope, $http, $q, bookmarkSe
 
     pollFromOC();
 
-    $scope.bookmarkService.getRefreshRate().then(function (value) {
-        console.log('refresh rate:' + value.refreshRate);
+    $scope.bookmarkService.getSettings().then(function (value) {
+        console.log('refresh rate:' + value.settings.refreshRate);
         window.setInterval(function () {
             pollFromOC();
-        }, value.refreshRate);
+        }, value.settings.refreshRate);
     });
 
     chrome.storage.onChanged.addListener(function (changes, namespace) {

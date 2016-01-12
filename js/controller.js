@@ -43,10 +43,13 @@ bookmarkApp.service('bookmarkService', function ($http, $q) {
         });
     };
 
-    this.setRefreshRate = function (value) {
+    this.setSettings = function (refreshRate, displayLocalBookmarks) {
         var deferred = $q.defer();
-        var refreshRate = value * 60 * 1000; // value is always in minutes
-        chrome.storage.sync.set({'refreshRate': refreshRate}, function () {
+
+        var settings = {};
+        settings.refreshRate = refreshRate * 60 * 1000;
+        settings.displayLocalBookmarks = displayLocalBookmarks;
+        chrome.storage.sync.set({'settings': settings}, function () {
             console.log('refresh rate updated to ' + refreshRate + ' milli seconds.');
             deferred.resolve();
         });
@@ -54,11 +57,12 @@ bookmarkApp.service('bookmarkService', function ($http, $q) {
         return deferred.promise;
     };
 
-    this.getRefreshRate = function () {
+    this.getSettings = function () {
         var deferred = $q.defer();
-        chrome.storage.sync.get('refreshRate', function (item) {
-            if (item == undefined || item.refreshRate == undefined) {
-                item.refreshRate = 5; // default value is 5 min.
+        chrome.storage.sync.get('settings', function (item) {
+            if (item == undefined || item.settings == undefined) {
+                item.settings.refreshRate = 5 * 60 * 1000; // default value is 5 min.
+                item.settings.displayLocalBookmarks = false;
             }
             deferred.resolve(item);
         });
