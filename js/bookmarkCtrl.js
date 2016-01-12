@@ -6,6 +6,8 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
         $scope.bookmarkService = bookmarkService;
 
         $scope.serverUrl = '';
+    $scope.username = '';
+    $scope.password = '';
         $scope.allBookmarks = [];
         $scope.allTags = [];
         $scope.filteredTags = [];
@@ -105,6 +107,28 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
             }
         };
 
+    $scope.removeBookmark = function (id) {
+        $http({
+            url: $scope.serverUrl + DELETE_URI,
+            method: "POST",
+            processData: false,
+            contentType: false,
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': 'Basic ' + window.btoa($scope.username + ":" + $scope.password)
+            },
+            data: $.param({
+                'id': id
+            })
+        }).then(function (response) {
+                $scope.bookmarkService.setNeedReloading(true).then(function () {
+                });
+            }, function (response) {
+            }
+        );
+    };
+
         var updateCanvas = function (tags) {
             var allFriends = [];
             allFriends = allFriends.concat(tags[0].friends);
@@ -187,10 +211,10 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
                 if (tag != undefined) {
                     tempSelectedTags.push(findTagByText($scope.selectedTags[i].text, $scope.allTags));
                 }
-            }
+                }
 
             $scope.selectedTags = tempSelectedTags;
-        }
+            }
     };
 
         var addLocalTags = function () {
@@ -241,6 +265,8 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
         $scope.bookmarkService.loadCredentials().then(
             function (app) {
                 $scope.serverUrl = app.bookmarksData.serverUrl;
+                $scope.username = app.bookmarksData.username;
+                $scope.password = app.bookmarksData.password;
             });
 
     $scope.bookmarkService.getSettings().then(function (value) {

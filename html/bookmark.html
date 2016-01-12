@@ -59,11 +59,14 @@
                     </div>
                 </div>
                 <ul class="list-group bookmark-scrollable bookmarkList">
-                    <li data-ng-repeat="b in selectedBookmarks" class="list-group-item">
+                    <li data-ng-repeat="b in selectedBookmarks" class="list-group-item" ng-mouseover="showMe = true;"
+                        ng-mouseout="showMe = false;">
                         <img src="chrome://favicon/{{b.url}}"/>&nbsp;
                         <a title="{{b.title}}"
                            href="{{b.url}}"
-                           target="_blank" style="font-family: Tahoma,Helvetica,Arial">{{b.title}}</a>
+                           target="_blank" style="font-family: Tahoma,Helvetica,Arial">{{b.title}}</a>&nbsp;&nbsp;<span
+                            ng-click="removeBookmark(b.id)" id="close" ng-show="showMe"
+                            style="color:#a6c1d0;cursor: pointer" class="fa fa-close pull-right"></span>
                     </li>
                 </ul>
             </div>
