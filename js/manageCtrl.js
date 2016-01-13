@@ -59,7 +59,7 @@ bookmarkApp.controller('manageCtrl', function ($scope, $http, $q, bookmarkServic
                 'id': $scope.app.id
             })
         }).then(function (response) {
-            $scope.bookmarkService.setNeedReloading(true).then(function () {
+            $scope.bookmarkService.setNeedReloading(new Date().getTime()).then(function () {
                 $scope.app.dataSaved = true;
                 $scope.app.isUpdating = false;
                 window.close();
@@ -88,7 +88,7 @@ bookmarkApp.controller('manageCtrl', function ($scope, $http, $q, bookmarkServic
                 'id': $scope.app.id
             })
         }).then(function (response) {
-            $scope.bookmarkService.setNeedReloading(true).then(function () {
+            $scope.bookmarkService.setNeedReloading(new Date().getTime()).then(function () {
                 $scope.app.dataSaved = true;
                 $scope.app.isUpdating = false;
                 window.close();

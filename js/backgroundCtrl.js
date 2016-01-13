@@ -86,11 +86,8 @@ bookmarkApp.controller('backgroundCtrl', function ($scope, $http, $q, bookmarkSe
 
     chrome.storage.onChanged.addListener(function (changes, namespace) {
         for (key in changes) {
-            var storageChange = changes[key];
-            if (key == 'needsReloading' && storageChange.newValue == true) {
-                $scope.bookmarkService.setNeedReloading(false).then(function () {
-                    pollFromOC();
-                });
+            if (key == 'needsReloading') {
+                pollFromOC();
             }
         }
     });

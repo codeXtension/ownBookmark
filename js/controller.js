@@ -33,9 +33,6 @@ bookmarkApp.service('bookmarkService', function ($http, $q) {
     this.getNeedReloading = function () {
         var deferred = $q.defer();
         chrome.storage.sync.get('needsReloading', function (item) {
-            if (item == undefined || item.needsReloading == undefined) {
-                item.needsReloading = false; // default value is 5 min.
-            }
             deferred.resolve(item);
         });
         return deferred.promise;
