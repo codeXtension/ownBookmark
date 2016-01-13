@@ -5,10 +5,10 @@
 bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService, $q) {
         $scope.bookmarkService = bookmarkService;
 
-    $scope.app = {};
-    $scope.app.serverUrl = '';
-    $scope.app.username = '';
-    $scope.app.password = '';
+        $scope.app = {};
+        $scope.app.serverUrl = '';
+        $scope.app.username = '';
+        $scope.app.password = '';
 
         $scope.allBookmarks = [];
         $scope.allTags = [];
@@ -16,7 +16,7 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
         $scope.selectedTags = [];
         $scope.selectedBookmarks = [];
         $scope.filterText = '';
-    $scope.displayLocalBookmarks = false;
+        $scope.displayLocalBookmarks = false;
 
         $scope.$watchCollection('selectedTags', function () {
             window.setTimeout(function () {
@@ -73,9 +73,9 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
 
         });
 
-    $scope.openOptions = function () {
-        chrome.tabs.create({'url': "../html/settings.html"});
-    };
+        $scope.openOptions = function () {
+            chrome.tabs.create({'url': "../html/settings.html"});
+        };
 
         $scope.loadItems = function (query) {
             var selectedTags = [];
@@ -109,42 +109,42 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
             }
         };
 
-    $scope.removeBookmark = function (bmk) {
-        $http({
-            url: $scope.app.serverUrl + DELETE_URI,
-            method: "POST",
-            processData: false,
-            contentType: false,
-            withCredentials: true,
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Authorization': 'Basic ' + window.btoa($scope.app.username + ":" + $scope.app.password)
-            },
-            data: $.param({
-                'id': bmk.id
-            })
-        }).then(function (response) {
-                $scope.bookmarkService.retrieveBookmarks($scope.app).then(function (result) {
-                    $scope.bookmarkService.saveBookmarksToCache(result.data);
-                    var index = $scope.allBookmarks.indexOf(bmk);
+        $scope.removeBookmark = function (bmk) {
+            $http({
+                url: $scope.app.serverUrl + DELETE_URI,
+                method: "POST",
+                processData: false,
+                contentType: false,
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Authorization': 'Basic ' + window.btoa($scope.app.username + ":" + $scope.app.password)
+                },
+                data: $.param({
+                    'id': bmk.id
+                })
+            }).then(function (response) {
+                    $scope.bookmarkService.retrieveBookmarks($scope.app).then(function (result) {
+                        $scope.bookmarkService.saveBookmarksToCache(result.data);
+                        var index = $scope.allBookmarks.indexOf(bmk);
 
-                    if (index > -1) {
-                        $scope.allBookmarks.splice(index, 1);
-                        $scope.allTags = $scope.bookmarkService.retrieveTags($scope.allBookmarks);
-                        if ($scope.displayLocalBookmarks) {
-                            addLocalTags().then(function () {
+                        if (index > -1) {
+                            $scope.allBookmarks.splice(index, 1);
+                            $scope.allTags = $scope.bookmarkService.retrieveTags($scope.allBookmarks);
+                            if ($scope.displayLocalBookmarks) {
+                                addLocalTags().then(function () {
+                                    prepareUI($scope.allBookmarks);
+                                });
+                            } else {
                                 prepareUI($scope.allBookmarks);
-                            });
-                        } else {
-                                prepareUI($scope.allBookmarks);
+                            }
                         }
-                        }
-                    $scope.bookmarkService.setNeedReloading(new Date().getTime());
-                });
-            }, function (response) {
-            }
-        );
-    };
+                        $scope.bookmarkService.setNeedReloading(new Date().getTime());
+                    });
+                }, function (response) {
+                }
+            );
+        };
 
         var updateCanvas = function (tags) {
             var allFriends = [];
@@ -217,22 +217,22 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
             });
         };
 
-    var prepareUI = function (allBookmarks) {
-        if ($scope.selectedTags.length == 0) {
-            $scope.filteredTags = $scope.allTags;
-            $scope.selectedBookmarks = allBookmarks;
-        } else {
-            var tempSelectedTags = [];
-            for (var i = 0; i < $scope.selectedTags.length; i++) {
-                var tag = findTagByText($scope.selectedTags[i].text, $scope.allTags);
-                if (tag != undefined) {
-                    tempSelectedTags.push(findTagByText($scope.selectedTags[i].text, $scope.allTags));
-                }
+        var prepareUI = function (allBookmarks) {
+            if ($scope.selectedTags.length == 0) {
+                $scope.filteredTags = $scope.allTags;
+                $scope.selectedBookmarks = allBookmarks;
+            } else {
+                var tempSelectedTags = [];
+                for (var i = 0; i < $scope.selectedTags.length; i++) {
+                    var tag = findTagByText($scope.selectedTags[i].text, $scope.allTags);
+                    if (tag != undefined) {
+                        tempSelectedTags.push(findTagByText($scope.selectedTags[i].text, $scope.allTags));
+                    }
                 }
 
-            $scope.selectedTags = tempSelectedTags;
+                $scope.selectedTags = tempSelectedTags;
             }
-    };
+        };
 
         var addLocalTags = function () {
             var deferred = $q.defer();
@@ -268,15 +268,15 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
             }
         };
 
-    loadCachedBookmarks();
+        loadCachedBookmarks();
 
-    chrome.storage.onChanged.addListener(function (changes, namespace) {
-        for (key in changes) {
-            if (key == 'needsReloading') {
-                loadCachedBookmarks();
+        chrome.storage.onChanged.addListener(function (changes, namespace) {
+            for (key in changes) {
+                if (key == 'needsReloading') {
+                    loadCachedBookmarks();
+                }
             }
-            }
-    });
+        });
 
         $scope.bookmarkService.loadCredentials().then(
             function (app) {
@@ -285,9 +285,9 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
                 $scope.app.password = app.bookmarksData.password;
             });
 
-    $scope.bookmarkService.getSettings().then(function (value) {
-        console.log('refresh rate:' + value.settings.refreshRate);
-        $scope.displayLocalBookmarks = value.settings.displayLocalBookmarks;
+        $scope.bookmarkService.getSettings().then(function (value) {
+            console.log('refresh rate:' + value.settings.refreshRate);
+            $scope.displayLocalBookmarks = value.settings.displayLocalBookmarks;
             window.setInterval(function () {
                 loadCachedBookmarks();
             }, value.settings.refreshRate);
