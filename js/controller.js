@@ -3,7 +3,11 @@
  */
 var bookmarkApp = angular.module('bookmarkApp', ['ngResource', 'ngTagsInput', 'ui.validate']);
 
-var bookmarkUri = 'index.php/apps/bookmarks/public/rest/v1/bookmark';
+var bookmarkUri = '/index.php/apps/bookmarks/public/rest/v1/bookmark';
+var ADD_URI = '/index.php/apps/bookmarks/public/rest/v1/bookmark/add';
+var UPDATE_URI = '/index.php/apps/bookmarks/public/rest/v1/bookmark/update';
+var DELETE_URI = '/index.php/apps/bookmarks/public/rest/v1/bookmark/delete';
+
 var tagCanvas;
 
 // adding chrome-extension:// to the list of safe urls

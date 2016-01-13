@@ -2,11 +2,6 @@
  * Created by eelkhour on 12.12.2015.
  */
 bookmarkApp.controller('manageCtrl', function ($scope, $http, $q, bookmarkService) {
-
-    var ADD_URI = '/index.php/apps/bookmarks/public/rest/v1/bookmark/add';
-    var UPDATE_URI = '/index.php/apps/bookmarks/public/rest/v1/bookmark/update';
-    var DELETE_URI = '/index.php/apps/bookmarks/public/rest/v1/bookmark/delete';
-
     $scope.bookmarkService = bookmarkService;
 
     $scope.app = {};
