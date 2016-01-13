@@ -136,9 +136,9 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
                                 prepareUI($scope.allBookmarks);
                             });
                         } else {
-                            prepareUI($scope.allBookmarks);
+                                prepareUI($scope.allBookmarks);
                         }
-                    }
+                        }
                     $scope.bookmarkService.setNeedReloading(new Date().getTime());
                 });
             }, function (response) {
