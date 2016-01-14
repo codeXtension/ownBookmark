@@ -88,6 +88,7 @@ bookmarkApp.controller('settingsCtrl', function ($scope, $http, bookmarkService,
 
     $scope.saveSettings = function (app) {
         $scope.bookmarkService.setSettings(app.refreshRate, app.displayLocalBookmarks).then(function () {
+            $scope.bookmarkService.reloadBookmark();
             $.bootstrapGrowl(DATA_SAVED_WITH_SUCCESS, {type: 'success', width: 400, delay: 3000});
         });
 

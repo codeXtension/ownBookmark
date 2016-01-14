@@ -21,20 +21,21 @@ bookmarkApp.config([
 
 bookmarkApp.service('bookmarkService', function ($http, $q) {
 
-    this.setNeedReloading = function (value) {
+    this.reloadBackground = function () {
         var deferred = $q.defer();
-        chrome.storage.sync.set({'needsReloading': value}, function () {
+        chrome.storage.sync.set({'reloadBackground': new Date().getTime()}, function () {
             deferred.resolve();
         });
 
         return deferred.promise;
     };
 
-    this.getNeedReloading = function () {
+    this.reloadBookmark = function () {
         var deferred = $q.defer();
-        chrome.storage.sync.get('needsReloading', function (item) {
-            deferred.resolve(item);
+        chrome.storage.sync.set({'reloadBookmark': new Date().getTime()}, function () {
+            deferred.resolve();
         });
+
         return deferred.promise;
     };
 
@@ -153,6 +154,7 @@ bookmarkApp.service('bookmarkService', function ($http, $q) {
 
         for (var i = 0; i < dataArray.length; i++) {
             var tags = dataArray[i].tags;
+            var isLocalTag = dataArray[i].local != undefined && dataArray[i].local;
             if (tags.length == 1 && tags[0].trim().length == 0) {
                 continue;
             }
@@ -160,7 +162,11 @@ bookmarkApp.service('bookmarkService', function ($http, $q) {
                 if (this.indexOfTag(tags[j], allTags) == -1) {
                     var t = new TagNode(tags[j].trim());
                     t.setWeight(10);
-                    t.color = '#2E6DA4';
+                    if (!isLocalTag) {
+                        t.color = '#2E6DA4';
+                    } else {
+                        t.color = '#91205a';
+                    }
                     t.friends = [];
                     allTags.push(t);
                 } else {

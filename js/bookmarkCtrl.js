@@ -4,6 +4,7 @@
 
 bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService, $q) {
         $scope.bookmarkService = bookmarkService;
+        var refreshInterval;
 
         $scope.app = {};
         $scope.app.serverUrl = '';
@@ -54,7 +55,7 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
                         outlineColour: 'transparent',
                         weightFrom: 'data-weight',
                         weightSize: 5,
-                        zoom: 1.15,
+                        zoom: 1.1,
                         noTagsMessage: false,
                         weightSizeMax: 15,
                         weightSizeMin: 7,
@@ -109,43 +110,6 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
             }
         };
 
-        $scope.removeBookmark = function (bmk) {
-            $http({
-                url: $scope.app.serverUrl + DELETE_URI,
-                method: "POST",
-                processData: false,
-                contentType: false,
-                withCredentials: true,
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Authorization': 'Basic ' + window.btoa($scope.app.username + ":" + $scope.app.password)
-                },
-                data: $.param({
-                    'id': bmk.id
-                })
-            }).then(function (response) {
-                    $scope.bookmarkService.retrieveBookmarks($scope.app).then(function (result) {
-                        $scope.bookmarkService.saveBookmarksToCache(result.data);
-                        var index = $scope.allBookmarks.indexOf(bmk);
-
-                        if (index > -1) {
-                            $scope.allBookmarks.splice(index, 1);
-                            $scope.allTags = $scope.bookmarkService.retrieveTags($scope.allBookmarks);
-                            if ($scope.displayLocalBookmarks) {
-                                addLocalTags().then(function () {
-                                    prepareUI($scope.allBookmarks);
-                                });
-                            } else {
-                                prepareUI($scope.allBookmarks);
-                            }
-                        }
-                        $scope.bookmarkService.setNeedReloading(new Date().getTime());
-                    });
-                }, function (response) {
-                }
-            );
-        };
-
         var updateCanvas = function (tags) {
             var allFriends = [];
             allFriends = allFriends.concat(tags[0].friends);
@@ -195,7 +159,7 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
             }
             for (var i = 0; i < tags.length; i++) {
                 var tag = tags[i];
-                if (tag.text.toLowerCase().indexOf(tagName.toLowerCase()) > -1) {
+                if (tag.text.toLowerCase() == tagName.toLowerCase()) {
                     return tag;
                 }
             }
@@ -205,12 +169,13 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
         var loadCachedBookmarks = function () {
             $scope.bookmarkService.loadCachedBookmarks().then(function (allBookmarks) {
                 $scope.allBookmarks = allBookmarks;
-                $scope.allTags = $scope.bookmarkService.retrieveTags(allBookmarks);
                 if ($scope.displayLocalBookmarks) {
                     addLocalTags().then(function () {
+                        $scope.allTags = $scope.bookmarkService.retrieveTags(allBookmarks);
                         prepareUI(allBookmarks);
                     });
                 } else {
+                    $scope.allTags = $scope.bookmarkService.retrieveTags(allBookmarks);
                     prepareUI(allBookmarks);
                 }
 
@@ -239,44 +204,46 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
             chrome.bookmarks.getTree(
                 function (bookmarkTreeNodes) {
                     if (bookmarkTreeNodes[0].children && bookmarkTreeNodes[0].children[0].children) {
-                        $('#bookmarks').append(addTags(bookmarkTreeNodes[0].children[0].children));
+                        for (var i = 0; i < bookmarkTreeNodes[0].children[0].children.length; i++) {
+                            var level0 = bookmarkTreeNodes[0].children[0].children[i];
+                            scanLocalBookmarks(level0, []);
+                        }
                         deferred.resolve();
                     }
                 });
             return deferred.promise;
         };
 
-        var addTags = function (bookmarkNodes) {
-            for (i = 0; i < bookmarkNodes.length; i++) {
-                if (bookmarkNodes[i].children && bookmarkNodes[i].children.length > 0) {
-                    var t = new TagNode(bookmarkNodes[i].title);
-                    t.setWeight(10);
-                    t.friends = [];
-                    t.color = '#91205a';
-                    $scope.allTags.push(t);
+        var scanLocalBookmarks = function (bookmarkNode, parentTags) {
+            if (bookmarkNode.url != undefined) {
+                var bookmark = {
+                    url: bookmarkNode.url,
+                    title: bookmarkNode.title,
+                    tags: parentTags,
+                    local: true
+                };
 
-                    for (n = 0; n < bookmarkNodes[i].children.length; n++) {
-                        var bookmark = {
-                            url: bookmarkNodes[i].children[n].url,
-                            title: bookmarkNodes[i].children[n].title,
-                            tags: [bookmarkNodes[i].title]
-                        };
-
-                        $scope.allBookmarks.push(bookmark);
-                    }
+                $scope.allBookmarks.push(bookmark);
+            } else if (bookmarkNode.children != undefined) {
+                var tempTag = parentTags.slice();
+                tempTag.push(bookmarkNode.title);
+                for (var n = 0; n < bookmarkNode.children.length; n++) {
+                    scanLocalBookmarks(bookmarkNode.children[n], tempTag);
                 }
             }
         };
 
-        loadCachedBookmarks();
-
-        chrome.storage.onChanged.addListener(function (changes, namespace) {
-            for (key in changes) {
-                if (key == 'needsReloading') {
+        var initSettings = function () {
+            $scope.bookmarkService.getSettings().then(function (value) {
+                console.log('refresh rate:' + value.settings.refreshRate);
+                $scope.displayLocalBookmarks = value.settings.displayLocalBookmarks;
+                clearInterval(refreshInterval);
+                loadCachedBookmarks();
+                refreshInterval = window.setInterval(function () {
                     loadCachedBookmarks();
-                }
-            }
-        });
+                }, value.settings.refreshRate);
+            });
+        };
 
         $scope.bookmarkService.loadCredentials().then(
             function (app) {
@@ -285,12 +252,30 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
                 $scope.app.password = app.bookmarksData.password;
             });
 
-        $scope.bookmarkService.getSettings().then(function (value) {
-            console.log('refresh rate:' + value.settings.refreshRate);
-            $scope.displayLocalBookmarks = value.settings.displayLocalBookmarks;
-            window.setInterval(function () {
-                loadCachedBookmarks();
-            }, value.settings.refreshRate);
+        initSettings();
+
+        chrome.storage.onChanged.addListener(function (changes, namespace) {
+            for (key in changes) {
+                if (key == 'reloadBookmark') {
+                    initSettings();
+                }
+            }
+        });
+
+        chrome.bookmarks.onCreated.addListener(function (id, bookmark) {
+            loadCachedBookmarks();
+        });
+
+        chrome.bookmarks.onRemoved.addListener(function (id, removeInfo) {
+            loadCachedBookmarks();
+        });
+
+        chrome.bookmarks.onChanged.addListener(function (id, changeInfo) {
+            loadCachedBookmarks();
+        });
+
+        chrome.bookmarks.onMoved.addListener(function (id, moveInfo) {
+            loadCachedBookmarks();
         });
     }
 );

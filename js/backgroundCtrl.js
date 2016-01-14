@@ -48,13 +48,16 @@ bookmarkApp.controller('backgroundCtrl', function ($scope, $http, $q, bookmarkSe
     };
 
     var pollFromOC = function () {
+        var deferred = $q.defer();
         loadCredentials(function (app) {
                 $scope.bookmarkService.retrieveBookmarks($scope.app).then(function (result) {
                     $scope.bookmarkService.saveBookmarksToCache(result.data);
                     $scope.allBookmarks = result.data;
+                    deferred.resolve();
                 });
             }
         );
+        return deferred.promise;
     };
 
     var toggleCloudIcon = function (tab, allBookmarks) {
@@ -86,8 +89,10 @@ bookmarkApp.controller('backgroundCtrl', function ($scope, $http, $q, bookmarkSe
 
     chrome.storage.onChanged.addListener(function (changes, namespace) {
         for (key in changes) {
-            if (key == 'needsReloading') {
-                pollFromOC();
+            if (key == 'reloadBackground') {
+                pollFromOC().then(function () {
+                    $scope.bookmarkService.reloadBookmark();
+                });
             }
         }
     });
