@@ -84,7 +84,9 @@ bookmarkApp.service('bookmarkService', function ($http, $q) {
                     var cursor = event.target.result;
 
                     if (cursor) {
-                        allBookmarks.push(cursor.value);
+                        var bookmark = cursor.value;
+                        bookmark.color = '#2E6DA4';
+                        allBookmarks.push(bookmark);
                         cursor.continue();
                     } else {
                         deferred.resolve(allBookmarks);

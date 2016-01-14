@@ -220,7 +220,8 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
                     url: bookmarkNode.url,
                     title: bookmarkNode.title,
                     tags: parentTags,
-                    local: true
+                    local: true,
+                    color: '#91205a'
                 };
 
                 $scope.allBookmarks.push(bookmark);
