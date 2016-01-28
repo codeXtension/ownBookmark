@@ -54,11 +54,11 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
                         textColour: null,
                         outlineColour: 'transparent',
                         weightFrom: 'data-weight',
-                        weightSize: 5,
+                        weightSize: 4,
                         zoom: 1.1,
                         noTagsMessage: false,
-                        weightSizeMax: 15,
-                        weightSizeMin: 7,
+                        weightSizeMax: 12,
+                        weightSizeMin: 5,
                         dragControl: true,
                         weight: true,
                         weightMode: 'size',
@@ -78,6 +78,10 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
             chrome.tabs.create({'url': "../html/settings.html"});
         };
 
+        $scope.refresh = function () {
+            $scope.bookmarkService.reloadBackground();
+        };
+
         $scope.loadItems = function (query) {
             var selectedTags = [];
             for (var i = 0; i < $scope.filteredTags.length; i++) {
@@ -93,11 +97,13 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
             var t = findTagByText(tag.text, $scope.selectedTags);
             if ($scope.selectedTags.indexOf(t) == -1) {
                 $scope.selectedTags.push(findTagByText(tag.text));
+                $scope.filterText = '';
                 updateCanvas($scope.selectedTags);
             }
         };
 
         $scope.goBackOneLevel = function () {
+            $scope.filterText = '';
             if ($scope.selectedTags.length > 0) {
                 var index = $scope.bookmarkService.indexOfTag($scope.selectedTags[0].text, $scope.allTags);
                 $scope.selectedTags.splice($scope.selectedTags.length - 1, 1);
