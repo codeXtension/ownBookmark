@@ -45,14 +45,14 @@ bookmarkApp.service('bookmarkService', function ($http, $q) {
         });
     };
 
-    this.setSettings = function (refreshRate, displayLocalBookmarks) {
+    this.setSettings = function (refreshRate, displayLocalBookmarks, staticTagCloud) {
         var deferred = $q.defer();
 
         var settings = {};
         settings.refreshRate = refreshRate * 60 * 1000;
         settings.displayLocalBookmarks = displayLocalBookmarks;
+        settings.staticTagCloud = staticTagCloud;
         chrome.storage.sync.set({'settings': settings}, function () {
-            console.log('refresh rate updated to ' + refreshRate + ' milli seconds.');
             deferred.resolve();
         });
 
@@ -65,6 +65,7 @@ bookmarkApp.service('bookmarkService', function ($http, $q) {
             if (item == undefined || item.settings == undefined) {
                 item.settings.refreshRate = 5 * 60 * 1000; // default value is 5 min.
                 item.settings.displayLocalBookmarks = false;
+                item.settings.staticTagCloud = false;
             }
             deferred.resolve(item);
         });
