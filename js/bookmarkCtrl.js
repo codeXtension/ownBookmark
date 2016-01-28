@@ -18,6 +18,7 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
         $scope.selectedBookmarks = [];
         $scope.filterText = '';
         $scope.displayLocalBookmarks = false;
+        $scope.staticTagCloud = false;
 
         $scope.$watchCollection('selectedTags', function () {
             window.setTimeout(function () {
@@ -50,6 +51,10 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
                 if (newValue.length > 0) {
                     $('#tagsCanvas').attr('width', window.innerWidth - 650);
                     $('#tagsCanvas').attr('height', window.innerHeight - 50);
+
+                    $('#staticTagsCanvas').attr('width', window.innerWidth - 650);
+                    $('#staticTagsCanvas').attr('height', window.innerHeight - 50);
+
                     tagCanvas = $('#tagsCanvas').tagcanvas({
                         textColour: null,
                         outlineColour: 'transparent',
@@ -64,6 +69,24 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
                         weightMode: 'size',
                         outlineThickness: 0
                     });
+
+                    var staticTags = [];
+                    for (var i = 0; i < $scope.filteredTags.length; i++) {
+                        var ft = [$scope.filteredTags[i].text, $scope.filteredTags[i].weight];
+                        staticTags.push(ft);
+                    }
+
+                    WordCloud(document.getElementById('staticTagsCanvas'),
+                        {
+                            list: staticTags,
+                            minSize: 12,
+                            weightFactor: 5,
+                            click: function (item, dimension, event) {
+                                var retrievedTag = {};
+                                retrievedTag.text = item[0];
+                                $scope.toggleBookmarkWithTag(retrievedTag);
+                            }
+                        });
 
                     if (!tagCanvas) {
                         // TagCanvas failed to load
@@ -244,6 +267,7 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
             $scope.bookmarkService.getSettings().then(function (value) {
                 console.log('refresh rate:' + value.settings.refreshRate);
                 $scope.displayLocalBookmarks = value.settings.displayLocalBookmarks;
+                $scope.staticTagCloud = value.settings.staticTagCloud;
                 clearInterval(refreshInterval);
                 loadCachedBookmarks();
                 refreshInterval = window.setInterval(function () {
