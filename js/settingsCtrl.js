@@ -74,6 +74,7 @@ bookmarkApp.controller('settingsCtrl', function ($scope, $http, bookmarkService,
             user.isValidating = false;
             if (response.isValid) {
                 $scope.bookmarkService.saveCredentials(user);
+                $scope.bookmarkService.reloadBackground();
                 $.bootstrapGrowl(DATA_SAVED_WITH_SUCCESS, {type: 'success', width: 400, delay: 3000});
             } else {
                 if (response.status == 'failure') {

@@ -49,48 +49,10 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
         $scope.$watchCollection('filteredTags', function (newValue, oldValue) {
             window.setTimeout(function () {
                 if (newValue.length > 0) {
-                    $('#tagsCanvas').attr('width', window.innerWidth - 650);
-                    $('#tagsCanvas').attr('height', window.innerHeight - 50);
-
-                    $('#staticTagsCanvas').attr('width', window.innerWidth - 650);
-                    $('#staticTagsCanvas').attr('height', window.innerHeight - 50);
-
-                    tagCanvas = $('#tagsCanvas').tagcanvas({
-                        textColour: null,
-                        outlineColour: 'transparent',
-                        weightFrom: 'data-weight',
-                        weightSize: 4,
-                        zoom: 1.1,
-                        noTagsMessage: false,
-                        weightSizeMax: 12,
-                        weightSizeMin: 5,
-                        dragControl: true,
-                        weight: true,
-                        weightMode: 'size',
-                        outlineThickness: 0
-                    });
-
-                    var staticTags = [];
-                    for (var i = 0; i < $scope.filteredTags.length; i++) {
-                        var ft = [$scope.filteredTags[i].text, $scope.filteredTags[i].weight];
-                        staticTags.push(ft);
-                    }
-
-                    WordCloud(document.getElementById('staticTagsCanvas'),
-                        {
-                            list: staticTags,
-                            minSize: 12,
-                            weightFactor: 5,
-                            click: function (item, dimension, event) {
-                                var retrievedTag = {};
-                                retrievedTag.text = item[0];
-                                $scope.toggleBookmarkWithTag(retrievedTag);
-                            }
-                        });
-
-                    if (!tagCanvas) {
-                        // TagCanvas failed to load
-                        $('#tagsContainer').hide();
+                    if ($scope.staticTagCloud) {
+                        drawStaticTagCloud();
+                    } else {
+                        drawDynamicTagCloud();
                     }
                 }
             }, 0);
@@ -122,6 +84,7 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
                 $scope.selectedTags.push(findTagByText(tag.text));
                 $scope.filterText = '';
                 updateCanvas($scope.selectedTags);
+                $scope.$digest();
             }
         };
 
@@ -137,6 +100,57 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
                 }
                 updateTags();
             }
+        };
+
+        var drawDynamicTagCloud = function () {
+            $('#tagsCanvas').attr('width', window.innerWidth - 650);
+            $('#tagsCanvas').attr('height', window.innerHeight - 50);
+            tagCanvas = $('#tagsCanvas').tagcanvas({
+                textColour: null,
+                outlineColour: 'transparent',
+                weightFrom: 'data-weight',
+                weightSize: 6,
+                zoom: 1.1,
+                noTagsMessage: false,
+                weightSizeMax: 14,
+                weightSizeMin: 5,
+                dragControl: true,
+                weight: true,
+                weightMode: 'size',
+                outlineThickness: 0
+            });
+
+            if (!tagCanvas) {
+                // TagCanvas failed to load
+                $('#tagsContainer').hide();
+            }
+        };
+
+        var drawStaticTagCloud = function () {
+            $('#staticTagsCanvas').attr('width', window.innerWidth - 650);
+            $('#staticTagsCanvas').attr('height', window.innerHeight - 50);
+            var staticTags = [];
+            for (var i = 0; i < $scope.filteredTags.length; i++) {
+                var ft = [$scope.filteredTags[i].text, $scope.filteredTags[i].weight];
+                staticTags.push(ft);
+            }
+
+            WordCloud($('#staticTagsCanvas')[0],
+                {
+                    list: staticTags,
+                    minSize: 12,
+                    backgroundColor: '#FDFCFC',
+                    weightFactor: 5,
+                    clearCanvas: true,
+                    click: function (item, dimension, event) {
+                        var retrievedTag = {};
+                        retrievedTag.text = item[0];
+                        $scope.toggleBookmarkWithTag(retrievedTag);
+                    },
+                    hover: function (item, dimension, event) {
+                        console.log(item);
+                    }
+                });
         };
 
         var updateCanvas = function (tags) {
@@ -160,7 +174,11 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
             if (allFriends.length == 0) {
                 $scope.filteredTags = [''];
             }
-            $('#tagsCanvas').tagcanvas("reload");
+            if ($scope.staticTagCloud) {
+                drawStaticTagCloud();
+            } else {
+                $('#tagsCanvas').tagcanvas("reload");
+            }
         };
 
         var prepareSelectedBookmarks = function () {
