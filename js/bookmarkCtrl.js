@@ -142,6 +142,15 @@ bookmarkApp.controller('bookmarkCtrl', function ($scope, $http, bookmarkService,
                     backgroundColor: '#FDFCFC',
                     weightFactor: 5,
                     clearCanvas: true,
+                    color: function (word, weight, fontSize, distance, theta) {
+						var charIndex =  word.toUpperCase().charCodeAt(0) - 64;
+                        console.log("word:" + word + ", code:" + charIndex);
+                        var colorNb = charIndex
+                        return 'hsl(' +
+                            (colorNb * 20).toFixed() + ',' +
+                            '100%,' +
+                            '30%)';
+                    },
                     click: function (item, dimension, event) {
                         var retrievedTag = {};
                         retrievedTag.text = item[0];
